@@ -1,6 +1,6 @@
 {
   "name": "@joouis/msal-react-utility",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The utility package for @azure/msal-react.",
   "keywords": [
     "azure",
@@ -17,7 +17,7 @@
     "lint": "tsc",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint",
     "prepublishOnly": "npm run ci",
-    "local-release": "changeset version && changeset publish"
+    "local-release": "npx changeset && changeset version && changeset publish"
   },
   "author": "John Chou <luckyjoou@gmail.com> (https://joouis.com)",
   "license": "MIT",
