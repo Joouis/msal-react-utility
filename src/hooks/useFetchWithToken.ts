@@ -1,11 +1,11 @@
 import type { SilentRequest } from '@azure/msal-browser';
-import React from 'react';
+import { useCallback } from 'react';
 import { useGetToken } from './useGetToken';
 
 export const useFetchWithToken = (tokenRequestConfigs?: SilentRequest) => {
   const getToken = useGetToken(tokenRequestConfigs);
 
-  return React.useCallback(
+  return useCallback(
     async (input: string | URL | globalThis.Request, init?: RequestInit) => {
       try {
         const token = await getToken();
