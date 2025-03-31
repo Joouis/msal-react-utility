@@ -4,3 +4,4 @@ export * from './hooks/useFetchWithToken';
 export * from './hooks/useGetToken';
 export * from './utilities/sleep';
 export * from './utilities/getResponseData';
+export * from './inteface';
