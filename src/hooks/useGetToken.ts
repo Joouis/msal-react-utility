@@ -11,12 +11,7 @@ import {
 } from '@azure/msal-browser';
 import { useEventCallback } from './useEventCallback';
 import { sleep } from '../utilities/sleep';
-
-export interface IGetTokenOptions {
-  tokenType?: 'id' | 'access';
-  requestConfigs?: SilentRequest;
-}
-type GetToken = (opts?: IGetTokenOptions) => Promise<string | undefined>;
+import { TokenType, type GetToken } from '../inteface';
 
 // User should have logged in before calling this hook
 export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
@@ -29,7 +24,7 @@ export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
   }, [inProgress]);
 
   const getToken: GetToken = useEventCallback(async (opts) => {
-    const { tokenType = 'access', requestConfigs } = opts || {};
+    const { tokenType = TokenType.access, requestConfigs } = opts || {};
     while (inProgressRef.current !== InteractionStatus.None) {
       await sleep(100);
     }
@@ -58,7 +53,7 @@ export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
       const idTokenExp = (resp.idTokenClaims as any).exp as number;
       if (resp.fromCache && idTokenExp * 1000 - Date.now() < 2 * 60 * 1000) {
         return await getToken({
-          tokenType: 'id',
+          tokenType: TokenType.id,
           requestConfigs: { ...configs, forceRefresh: true },
         });
       }

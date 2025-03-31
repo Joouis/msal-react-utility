@@ -3,8 +3,7 @@
     /* Base Options: */
     "esModuleInterop": true,
     "skipLibCheck": true,
-    /* Follow msal-react: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/tsconfig.json */
-    "target": "es2020",
+    "target": "es2022",
     "allowJs": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
