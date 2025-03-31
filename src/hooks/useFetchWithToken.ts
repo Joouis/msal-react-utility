@@ -1,3 +1,5 @@
+'use client';
+
 import type { SilentRequest } from '@azure/msal-browser';
 import { useCallback } from 'react';
 import { useGetToken } from './useGetToken';

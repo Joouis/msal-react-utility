@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useEventCallback } from './useEventCallback';
 import { useFetchWithToken } from './useFetchWithToken';
