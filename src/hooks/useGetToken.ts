@@ -50,6 +50,10 @@ export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
         return resp.accessToken;
       }
 
+      if (!resp.idToken) {
+        throw new Error('ID token is not available');
+      }
+
       const idTokenExp = (resp.idTokenClaims as any).exp as number;
       if (resp.fromCache && idTokenExp * 1000 - Date.now() < 2 * 60 * 1000) {
         return await getToken({
