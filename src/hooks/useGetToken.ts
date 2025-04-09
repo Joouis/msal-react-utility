@@ -11,6 +11,7 @@ import {
 } from '@azure/msal-browser';
 import { useEventCallback } from './useEventCallback';
 import { sleep } from '../utilities/sleep';
+import { parseJwtToken } from '../utilities/parseJwtToken';
 import { TokenType, type GetToken } from '../inteface';
 
 // User should have logged in before calling this hook
@@ -54,8 +55,9 @@ export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
         throw new Error('ID token is not available');
       }
 
-      const idTokenExp = (resp.idTokenClaims as any).exp as number;
-      if (resp.fromCache && idTokenExp * 1000 - Date.now() < 2 * 60 * 1000) {
+      const idTokenExp = parseJwtToken(resp.idToken).exp;
+      // Refresh the ID token if it is about to expire in 2 minutes
+      if (idTokenExp && idTokenExp * 1000 - Date.now() < 2 * 60 * 1000) {
         return await getToken({
           tokenType: TokenType.id,
           requestConfigs: { ...configs, forceRefresh: true },

@@ -1,6 +1,6 @@
 {
   "name": "@joouis/msal-react-utility",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "The utility package for @azure/msal-react.",
   "keywords": [
     "azure",
