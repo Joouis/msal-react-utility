@@ -70,7 +70,6 @@ const MyComponent = () => {
   return <button onClick={fetchData}>Fetch Data</button>;
 };
 ```
-
 **Input:**
 
 - `defaultRequestConfigs?: SilentRequest` - Default token request configuration from MSAL
@@ -87,6 +86,7 @@ const MyComponent = () => {
 - Manages token acquisition during MSAL interaction flows
 - Falls back to redirect login flow if no active account is found
 - For ID tokens, automatically refreshes if token is close to expiration (< 2 minutes)
+- Uses global configuration if available (see Global Configuration section)
 
 #### useFetchWithToken
 
@@ -138,6 +138,10 @@ const MyComponent = () => {
 - Fetch function: `(input: string | URL | Request, init?: RequestInit, getTokenOpts?: IGetTokenOptions) => Promise<Response>`
   - Returns a standard Fetch Response with Authorization header automatically added
   - Returns an error Response with status 401 if token acquisition fails
+
+**Notes:**
+
+- Uses global configuration if available (see Global Configuration section)
 
 #### useFetchWithStatus
 
@@ -213,6 +217,7 @@ const MyComponent = () => {
 - Manages loading state automatically
 - Properly types the response data
 - Integrates with `getResponseData` to parse the response based on content type
+- Inherits global configuration through its use of `useFetchWithToken`
 
 #### useEventCallback
 
@@ -347,7 +352,57 @@ const delayedOperation = async () => {
 
 - `Promise<void>` - Promise that resolves after the delay
 
+### Global Configuration
+
+Provides a way to set global default configurations for token requests that will be used by all hooks in the library. This eliminates the need to pass the same configuration to multiple hooks across your application.
+
+```typescript
+import { setDefaultSilentRequest, useGetToken, useFetchWithToken } from '@joouis/msal-react-utility';
+
+// Set global default configuration once at the application startup
+setDefaultSilentRequest({
+  scopes: ['User.Read', 'api://my-app/access'],
+  authority: 'https://login.microsoftonline.com/tenant-id',
+  forceRefresh: false
+});
+
+// In components - hooks will use the global configuration automatically
+const MyComponent = () => {
+  // No need to pass the same config to each hook
+  const getToken = useGetToken(); // Uses global config
+  const fetchWithToken = useFetchWithToken(); // Uses global config
+  
+  // Can still override global config as needed
+  const getTokenWithCustomScope = useGetToken({
+    scopes: ['Mail.Read'] // Overrides the global scopes
+  });
+  
+  // Implementation...
+};
+```
+
+**Global Configuration Functions:**
+
+- `setDefaultSilentRequest(config: SilentRequest): void` - Sets the default SilentRequest configuration for all token requests
+- `getDefaultSilentRequest(): SilentRequest | undefined` - Gets the current global configuration
+
+**Configuration Hierarchy:**
+
+When using hooks, configurations are applied in the following order of precedence:
+1. Default values (`scopes: ['User.Read']`, `prompt: 'select_account'`)
+2. Global configuration (set via `setDefaultSilentRequest`)
+3. Hook-level configuration (passed directly to hooks like `useGetToken`)
+4. Call-level configuration (passed when calling functions like `getToken()`)
+
+**Benefits:**
+
+- Reduces code duplication across components
+- Centralizes authentication configuration
+- Makes codebase more maintainable
+- Allows easy updates to scopes or authorities
+- No context provider required
+
 ## TODO
 
-- A context to register logger and default auth configs.
+- Add a context to register logger.
 - Add test script.

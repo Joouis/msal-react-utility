@@ -13,6 +13,7 @@ import { useEventCallback } from './useEventCallback';
 import { sleep } from '../utilities/sleep';
 import { parseJwtToken } from '../utilities/parseJwtToken';
 import { TokenType, type GetToken } from '../inteface';
+import { getDefaultSilentRequest } from '../globalConfig';
 
 // User should have logged in before calling this hook
 export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
@@ -33,6 +34,7 @@ export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
     const configs = {
       scopes: ['User.Read'],
       prompt: 'select_account',
+      ...getDefaultSilentRequest(),
       ...defaultRequestConfigs,
       ...requestConfigs,
     };
