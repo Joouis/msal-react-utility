@@ -70,6 +70,7 @@ const MyComponent = () => {
   return <button onClick={fetchData}>Fetch Data</button>;
 };
 ```
+
 **Input:**
 
 - `defaultRequestConfigs?: SilentRequest` - Default token request configuration from MSAL
@@ -357,13 +358,17 @@ const delayedOperation = async () => {
 Provides a way to set global default configurations for token requests that will be used by all hooks in the library. This eliminates the need to pass the same configuration to multiple hooks across your application.
 
 ```typescript
-import { setDefaultSilentRequest, useGetToken, useFetchWithToken } from '@joouis/msal-react-utility';
+import {
+  setDefaultSilentRequest,
+  useGetToken,
+  useFetchWithToken,
+} from '@joouis/msal-react-utility';
 
 // Set global default configuration once at the application startup
 setDefaultSilentRequest({
   scopes: ['User.Read', 'api://my-app/access'],
   authority: 'https://login.microsoftonline.com/tenant-id',
-  forceRefresh: false
+  forceRefresh: false,
 });
 
 // In components - hooks will use the global configuration automatically
@@ -371,12 +376,12 @@ const MyComponent = () => {
   // No need to pass the same config to each hook
   const getToken = useGetToken(); // Uses global config
   const fetchWithToken = useFetchWithToken(); // Uses global config
-  
+
   // Can still override global config as needed
   const getTokenWithCustomScope = useGetToken({
-    scopes: ['Mail.Read'] // Overrides the global scopes
+    scopes: ['Mail.Read'], // Overrides the global scopes
   });
-  
+
   // Implementation...
 };
 ```
@@ -389,6 +394,7 @@ const MyComponent = () => {
 **Configuration Hierarchy:**
 
 When using hooks, configurations are applied in the following order of precedence:
+
 1. Default values (`scopes: ['User.Read']`, `prompt: 'select_account'`)
 2. Global configuration (set via `setDefaultSilentRequest`)
 3. Hook-level configuration (passed directly to hooks like `useGetToken`)
@@ -405,4 +411,4 @@ When using hooks, configurations are applied in the following order of precedenc
 ## TODO
 
 - Add a context to register logger.
-- Add test script.
+- Add test scripts.
