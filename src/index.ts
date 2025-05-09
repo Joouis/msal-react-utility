@@ -1,3 +1,4 @@
+export * from './hooks/useAutoSetActiveAccount';
 export * from './hooks/useEventCallback';
 export * from './hooks/useFetchWithStatus';
 export * from './hooks/useFetchWithToken';

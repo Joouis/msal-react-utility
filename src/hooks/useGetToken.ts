@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 import { useMsal } from '@azure/msal-react';
-import type { SilentRequest } from '@azure/msal-browser';
+import type { AccountInfo, SilentRequest } from '@azure/msal-browser';
 import {
   InteractionRequiredAuthError,
   BrowserAuthError,
@@ -10,16 +10,17 @@ import {
   InteractionStatus,
 } from '@azure/msal-browser';
 import { useEventCallback } from './useEventCallback';
+import { useAutoSetActiveAccount } from './useAutoSetActiveAccount';
 import { sleep } from '../utilities/sleep';
 import { parseJwtToken } from '../utilities/parseJwtToken';
 import { TokenType, type GetToken } from '../inteface';
-import { getDefaultSilentRequest } from '../globalConfig';
+import { msalConfig } from '../globalConfig';
 
 // User should have logged in before calling this hook
 export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
-  const { instance, inProgress, accounts } = useMsal();
+  useAutoSetActiveAccount();
+  const { instance, inProgress } = useMsal();
   const inProgressRef = useRef(inProgress);
-  const account = accounts[0];
 
   useEffect(() => {
     inProgressRef.current = inProgress;
@@ -34,18 +35,18 @@ export const useGetToken = (defaultRequestConfigs?: SilentRequest) => {
     const configs = {
       scopes: ['User.Read'],
       prompt: 'select_account',
-      ...getDefaultSilentRequest(),
+      ...msalConfig.getDefaultSilentRequest(),
       ...defaultRequestConfigs,
       ...requestConfigs,
     };
     try {
-      const activeAccount = instance.getActiveAccount() || account;
+      const activeAccount = instance.getActiveAccount();
       if (!activeAccount) {
         await instance.loginRedirect();
       }
 
       const resp = await instance.acquireTokenSilent({
-        account: activeAccount,
+        account: activeAccount as AccountInfo,
         ...configs,
       });
 
