@@ -267,6 +267,32 @@ const MyComponent = ({ onSubmit }: { onSubmit: (data: FormData) => void }) => {
 - Solves the issue of creating new function references in render
 - Similar to the upcoming React `useEvent` hook
 
+#### useAutoSetActiveAccount
+
+Automatically sets the active account based on configured tenant ID.
+
+```typescript
+import { useAutoSetActiveAccount } from '@joouis/msal-react-utility';
+
+const App = () => {
+  // Call the hook at a high level in your app
+  useAutoSetActiveAccount();
+
+  return (
+    // Your app content
+  );
+};
+```
+
+**Notes:**
+
+- Automatically sets the active MSAL account based on:
+  1. Account matching the configured default tenant ID
+  2. First available account if no tenant ID match or no default tenant configured
+- Useful for multi-tenant applications where you need to ensure operations use the correct tenant
+- No configuration required - works with global tenant ID configuration
+- Best used near the root of your application
+
 ### Utilities
 
 #### getResponseData
