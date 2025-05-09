@@ -355,21 +355,23 @@ const delayedOperation = async () => {
 
 ### Global Configuration
 
-Provides a way to set global default configurations for token requests that will be used by all hooks in the library. This eliminates the need to pass the same configuration to multiple hooks across your application.
+Provides a way to set global default configurations for token requests and tenant ID that will be used by all hooks in the library. This eliminates the need to pass the same configuration to multiple hooks across your application.
 
 ```typescript
 import {
-  setDefaultSilentRequest,
+  msalConfig,
   useGetToken,
   useFetchWithToken,
 } from '@joouis/msal-react-utility';
 
-// Set global default configuration once at the application startup
-setDefaultSilentRequest({
+// Set global default configurations once at the application startup
+msalConfig.setDefaultSilentRequest({
   scopes: ['User.Read', 'api://my-app/access'],
   authority: 'https://login.microsoftonline.com/tenant-id',
   forceRefresh: false,
 });
+
+msalConfig.setDefaultTenantId('your-tenant-id');
 
 // In components - hooks will use the global configuration automatically
 const MyComponent = () => {
@@ -384,19 +386,25 @@ const MyComponent = () => {
 
   // Implementation...
 };
+
+// Reset all configurations if needed
+msalConfig.reset();
 ```
 
 **Global Configuration Functions:**
 
 - `setDefaultSilentRequest(config: SilentRequest): void` - Sets the default SilentRequest configuration for all token requests
-- `getDefaultSilentRequest(): SilentRequest | undefined` - Gets the current global configuration
+- `getDefaultSilentRequest(): SilentRequest | undefined` - Gets the current global SilentRequest configuration
+- `setDefaultTenantId(tenantId: string): void` - Sets the default tenant ID for all requests
+- `getDefaultTenantId(): string | undefined` - Gets the current global tenant ID
+- `reset(): void` - Resets all global configurations to their default values
 
 **Configuration Hierarchy:**
 
 When using hooks, configurations are applied in the following order of precedence:
 
 1. Default values (`scopes: ['User.Read']`, `prompt: 'select_account'`)
-2. Global configuration (set via `setDefaultSilentRequest`)
+2. Global configuration (set via `setDefaultSilentRequest` and `setDefaultTenantId`)
 3. Hook-level configuration (passed directly to hooks like `useGetToken`)
 4. Call-level configuration (passed when calling functions like `getToken()`)
 
@@ -405,8 +413,9 @@ When using hooks, configurations are applied in the following order of precedenc
 - Reduces code duplication across components
 - Centralizes authentication configuration
 - Makes codebase more maintainable
-- Allows easy updates to scopes or authorities
+- Allows easy updates to scopes, authorities, or tenant IDs
 - No context provider required
+- Flexible configuration reset capability
 
 ## TODO
 

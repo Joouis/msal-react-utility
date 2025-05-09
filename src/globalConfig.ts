@@ -1,6 +1,7 @@
 import type { SilentRequest } from '@azure/msal-browser';
 
 interface GlobalConfig {
+  defaultTenantId?: string;
   defaultSilentRequest?: SilentRequest;
 }
 
@@ -25,17 +26,17 @@ class MSALConfigSingleton {
     return this.config.defaultSilentRequest;
   }
 
+  public setDefaultTenantId(tenantId: string): void {
+    this.config.defaultTenantId = tenantId;
+  }
+
+  public getDefaultTenantId(): string | undefined {
+    return this.config.defaultTenantId;
+  }
+
   public reset(): void {
     this.config = {};
   }
 }
 
 export const msalConfig = MSALConfigSingleton.getInstance();
-
-export const setDefaultSilentRequest = (config: SilentRequest): void => {
-  msalConfig.setDefaultSilentRequest(config);
-};
-
-export const getDefaultSilentRequest = (): SilentRequest | undefined => {
-  return msalConfig.getDefaultSilentRequest();
-};
